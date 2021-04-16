@@ -1,0 +1,157 @@
+unit Unit1;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, ExtCtrls;
+
+type
+  TForm1 = class(TForm)
+    Label1: TLabel;
+    Label2: TLabel;      //Те элементы которые используются при создании программы
+    Label3: TLabel;
+    Edit1: TEdit;
+    Edit2: TEdit;
+    Label4: TLabel;
+    Label5: TLabel;
+    Edit3: TEdit;
+    Label6: TLabel;
+    Button1: TButton;
+    Button2: TButton;
+    Memo1: TMemo;
+    Button3: TButton;
+    RadioGroup2: TRadioGroup;
+    RadioButton1: TRadioButton;
+    RadioButton2: TRadioButton;
+    RadioButton3: TRadioButton;
+    Label7: TLabel;
+    Edit4: TEdit;
+    procedure Button3Click(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+{$R *.dfm}
+
+FUNCTION y(x: real):real;             //Функция ,при использовании в ней оператора производит выбор у
+begin
+  CASE Form1.RadioGroup2.ItemIndex of     //оператор выбора, с его помощью выбираем у
+  //ItemIndex - указывает на свойства обекта
+  //управление значениями RadioButton
+    0: y:= sqr(x) + 3;
+    1: IF x=0 then    // защита деления на 0
+       ShowMessage('Деление на ноль - sin(x)=0!')
+              else y:= x/sin(x);
+    2: IF x=0 then ShowMessage('Деление на ноль - x=0!')
+              else y:=sqr(x) *x - 1/x;
+    end;
+end;
+
+
+
+//Вычисляем по ф-ле левых прямоугольников
+procedure TForm1.Button1Click(Sender: TObject);
+var x,sum,h,a,b:real; i:word; n:word;
+begin
+  try a:=strtofloat(Edit1.Text);
+    except ShowMessage('Ошибка ввода числа a');
+      Exit;
+  end;                    //Защитные блоки
+
+  try b:=strtofloat(Edit2.Text);
+    except ShowMessage('Ошибка ввода числа b');
+      Exit;
+  end;
+
+  try n:=strtoint(Edit3.Text);
+     except ShowMessage('Ошибка ввода числа n');
+       Exit;
+  end;
+
+
+if n = 0 then   // защита деления на 0
+  ShowMessage('Деление на 0 - n=0!')
+else
+  begin
+    x:=a;                        //заданное значение
+    h:=(b-a)/n;                 //выражение используемое в ф-ле
+    sum:=0;                    //начальное значение суммы
+    for i:=0 to n-1 do
+    begin
+      x:=x+h;
+      sum:=sum+y(x);
+    end;
+    Memo1.Lines.Add(floattostr(h*sum));   //вывод в окно Memo1
+  end;
+
+end;
+
+
+
+procedure TForm1.Button3Click(Sender: TObject);
+begin
+  Edit1.Text:='';   {начальное значение}
+  Edit2.Text:='';   {начальное значение}
+  Edit3.Text:='';
+  Edit4.Text:='';   {начальное значение}
+  Memo1.Clear;    {очистка окна}
+end;
+
+ //Вычисляем по ф-ле Симпсона
+procedure TForm1.Button2Click(Sender: TObject);
+var x,sum,sum2,h,h2,a,b,pro,rez,eps:real; i:word; n:word;
+begin
+  try a:=strtofloat(Edit1.Text);
+    except ShowMessage('Ошибка ввода числа a');
+      Exit;
+  end;                                     //Защитные блоки
+  try b:=strtofloat(Edit2.Text);
+    except ShowMessage('Ошибка ввода числа b');
+      Exit;
+  end;
+  try n:=strtoint(Edit3.Text);
+     except ShowMessage('Ошибка ввода числа n');
+       Exit;
+
+       eps:= strtofloat(Edit4.Text);
+  end;
+
+  if n = 0 then     // защита деления на 0
+    ShowMessage('Деление на 0 - n=0!')
+  else
+  begin
+  x:=a;                           //заданное значение
+  h:=(b-a)/n;                   //выр-е используемое в ф-ле Симпсона
+  sum:=0;                         //начальное значение суммы
+  for i:=0 to n-1 do         //оператор который производит вычисление
+  begin
+    x := a + i*h;
+    sum:=sum+y(x);
+  end;
+  integral :=
+  x:=a+h/2;
+  sum2:=0;                   //начальное значение суммы 2
+  for i:=1 to n do        //оператор считает сумму от 1 до n
+  begin
+    sum2:=sum2+y(x);
+    x:=x+h;
+  end;
+  pro:=(y(a)+y(b))/2;   //сама сумма
+  h2:=(b-a)/(3*n);      //выр-е используемое в ф-ле Симпсона
+  rez:=h2*(pro+sum+(2*sum2));   //Формула Симпсона
+  Memo1.Lines.Add(floattostr(rez));    //вывод в окно Memo1, запись
+  end;
+end;
+end.
+
+
